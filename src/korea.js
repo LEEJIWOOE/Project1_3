@@ -1,17 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+// Korea.js
+import React, {useEffect, useState} from 'react';
+import {Route, useParams} from "react-router-dom";
+import '../css/korea.css';
 import GoogleMap from "./googleMap";
-import MyMap from "./KakaoMap";
-import Chatbot from "./chatbot";
-import axios from "axios";
-import { Route, useParams } from "react-router-dom";
-import '../css/forgine.css';
-import getBotResponse from './Reply';
-import { Card, Button } from "react-bootstrap";
-// import responses from "./responses.json";
+import getBotResponse from './Reply'
+import {Card} from "react-bootstrap";
 
-function Forgine(props) {
+function Korea(props) {
     let [userInput, setuserInput] = useState('');
-    let [city, setCity] = useState(['일본', '뉴옥', '상해', '태국','필리핀','유럽']);
+    let [city, setCity] = useState(['서울', '대전', '대구', '부산','강릉','양양']);
     let [cityTitle,setCityTitle] = useState(0);
     let [e, setE] = useState('바다가자');
     let [activeIndex, setActiveIndex] = useState(0);
@@ -30,6 +27,9 @@ function Forgine(props) {
         "/img/yang.jpg"
     ]);
 
+    const cityButtounClick = () =>{
+        setActiveIndex((prevIndex) => (prevIndex +1 ) % city.length);
+    };
 
     const getBackgroundColor = (index) => {
         const colors = ['lightblue',
@@ -41,37 +41,19 @@ function Forgine(props) {
         return colors[index % colors.length];
     };
 
-    const handlePrevClick = () => {
-        const prevIndex = (activeIndex - 1 < 0 ? city.length - 1 : activeIndex - 1);
-        setActiveIndex(prevIndex);
-        const cityLists = document.querySelectorAll('.F_city-list');
-        if (cityLists) {
-            cityLists.forEach((cityList, index) => {
-                cityList.style.transform = `translateX(-${prevIndex * 100}vw)`;
-            });
-        }
-    };
-
-    const handleNextClick = () => {
-        const nextIndex = (activeIndex + 1) % city.length;
-        setActiveIndex(nextIndex);
-        const cityLists = document.querySelectorAll('.F_city-list');
-        if (cityLists) {
-            cityLists.forEach((cityList, index) => {
-                cityList.style.transform = `translateX(-${nextIndex * 100}vw)`;
-            });
-        }
-    };
-
     return (
         <div className="App">
             <div className="K_header">
-                <div className="F_big_content">
+                <div className="big_content">
+                    <div className="city-list">
                         {city.map((cityName, i) => (
-                            <div className="F_city-list">
+                            <div
+                                key={i}
+                                className={`city-item content ${i === activeIndex ? 'slide-in' : 'slide-out'}`}
+                                style={{backgroundColor: getBackgroundColor(i)}}
+                            >
                                 <h2>
-                                    <button className="이전" onClick={handlePrevClick}>이전</button>
-                                    <button className="다음" onClick={handleNextClick}>다음</button>
+                                    <button onClick={cityButtounClick}>{e}</button>
                                 </h2>
                                 <img className="img_box"
                                      src={cityImg[i]}
@@ -84,8 +66,10 @@ function Forgine(props) {
                                 <p>{account[i]}</p>
                             </div>
                         ))}
+                    </div>
                 </div>
             </div>
+
             <div className="input_box">
                 <input type="text" onChange={(e) => {
                     setuserInput(e.target.value);
@@ -98,20 +82,15 @@ function Forgine(props) {
                 </button>
             </div>
             <div>
-                <Button variant="outline-warning" onClick={() => {
+                <button onClick={()=>{
                     setChatbot(!chatbot)
-                }}>chat!!</Button>{' '}
+                }}>chat!!</button>
                 {chatbot && <Chatbot city={city} setCity={setCity} cityTitle={cityTitle} setCityTitle={setCityTitle}/>}
             </div>
             <div>
-                <div className="Map">
+                <div>
                     <h1>Korea Component</h1>
-                    <div className="googleMap">
-                        <GoogleMap/>
-                    </div>
-                    <div className = "KakaoMap">
-                         <MyMap/>
-                    </div>
+                    <GoogleMap/>
                 </div>
             </div>
             {modal && <Modal city={city} setCity={setCity} cityTitle={cityTitle} setCityTitle={setCityTitle}/>}
@@ -209,4 +188,80 @@ function Modal(props) {
 }
 
 
-export default Forgine;
+function Chatbot(props) {
+    const [messages, setMessages] = useState([]); // 메시지 상태 설정
+
+    // 메시지 클릭 이벤트 핸들러
+    const handleClick = (event) => {
+        const content = event.target.nextElementSibling;
+
+        content.style.maxHeight = content.style.maxHeight ? null : content.scrollHeight + 'px';
+    };
+
+    // 시간 정보 가져오기 함수
+    const getTime = () => {
+        const today = new Date();
+        let hours = today.getHours();
+        let minutes = today.getMinutes();
+
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        const time = hours + ":" + minutes;
+        return time;
+    };
+
+    // 초기 메시지 설정 함수
+    const firstBotMessage = () => {
+        const firstMessage = "안녕하세요, 여행이야기입니다. 저희 여행이야기는 여행관련 자료안내사이트입니다. 어디로 떠나가볼까요? 1. 서울 2. 강릉 3. 군산 4. 부산";
+        const time = getTime();
+        setMessages([...messages, { content: firstMessage, type: 'bot', time }]);
+    };
+
+    // 사용자 입력에 따른 응답 가져오기 함수
+    const getHardResponse = (userText) => {
+        const botResponse = getBotResponse(userText);
+        const time = getTime();
+        setMessages([...messages, { content: botResponse, type: 'bot', time }]);
+    };
+    useEffect(() => {
+        firstBotMessage(); // 컴포넌트가 처음 렌더링될 때 초기 메시지 출력
+    }, []);
+
+    // 사용자 응답 처리 함수
+    const getResponse = (userText) => {
+        userText = userText.trim();
+        const time = getTime();
+
+        if (userText === "") {
+            userText = "오늘도 행복한하루 보내세요^^";
+        }
+
+        setMessages([...messages, { content: userText, type: 'user', time }]);
+        setTimeout(() => {
+            getHardResponse(userText);
+        }, 1000);
+    };
+
+    return (
+        <div className="Chatbot" style={{maxHeight: '300px', overflowY: 'auto'}}>
+            <div className="chatbox">
+                {messages.map((message, index) => (
+                    <div key={index} className={message.type}>
+                        <span>{message.content}</span>
+                        <div className="timestamp">{message.time}</div>
+                    </div>
+                ))}
+            </div>
+            <input id="textInput" type="text" placeholder="메시지 입력" onKeyPress={(e) => { if (e.key === 'Enter') getResponse(e.target.value) }} />
+            <button onClick={() => getResponse(document.getElementById('textInput').value)}>전송</button>
+        </div>
+    );
+
+}
+
+
+export default Korea;

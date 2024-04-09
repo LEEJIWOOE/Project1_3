@@ -2,6 +2,7 @@ import './App.css';
 import Korea from "./router/korea"
 import Forgine from "./router/forgine"
 import MyMap from "./router/KakaoMap"
+import LoginPage from "./router/login";
 import React, { useState, useEffect } from "react";
 import { Button, Container, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Route, Routes, Link, useNavigate, Outlet } from 'react-router-dom'
@@ -9,19 +10,6 @@ import { Route, Routes, Link, useNavigate, Outlet } from 'react-router-dom'
 function App() {
     let navigate = useNavigate();
 
-    const [data,setData] = useState([{}])
-
-    // useEffect(()=>{
-    //     fetch("/create").then(
-    //         res => res.json()
-    //     ).then(
-    //         data => {
-    //             setData(data)
-    //             console.log(data)
-    //         }
-    //
-    //     )
-    // }, [])
 
     return (
         <div className="App">
@@ -80,7 +68,7 @@ function App() {
                 <Route path="/korea" element={<Korea/>}/>
                 <Route path="/forgine" element={<Forgine />} />
                 <Route path="/MyMap" element={<MyMap />} />
-                <Route path="/login" element={<login />} />
+                <Route path="/login" element={<LoginPage />} />
             </Routes>
         </div>
     );
