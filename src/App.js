@@ -2,7 +2,7 @@ import './App.css';
 import Forgine from "./router/forgine"
 import MyMap from "./router/KakaoMap"
 import React, { useState, useEffect } from "react";
-import { Button, Container, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Button, Container, Form, Nav, Navbar, NavDropdown, Offcanvas } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Route, Routes, Link, useNavigate, Outlet } from 'react-router-dom'
 
@@ -12,45 +12,36 @@ function App() {
 
     return (
         <div className="App">
-            <Navbar expand="lg" className="bg-body-tertiary">
-                <Container fluid>
-                    <Navbar.Brand href="#">dusqo 여행</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="navbarScroll" />
-                    <Navbar.Collapse id="navbarScroll">
-                        <Nav
-                            className="me-auto my-2 my-lg-0"
-                            style={{ maxHeight: '100px' }}
-                            navbarScroll
-                        >
-                            <Nav.Link onClick={() => { navigate('/') }}>Home</Nav.Link>
-                            <Nav.Link onClick={() => { navigate('/korea') }}>공항</Nav.Link>
-                            <Nav.Link onClick={() => { navigate('/forgine') }}>놀이공원</Nav.Link>
-                            <NavDropdown title="Link" id="navbarScrollingDropdown">
-                                <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action4">
+            <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
+                <Container>
+                    <Navbar.Brand href="/">React-Bootstrap</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav className="me-auto">
+                            <Nav.Link href="/forgine">forgine</Nav.Link>
+                            <Nav.Link href="#pricing">Pricing</Nav.Link>
+                            <NavDropdown title="Dropdown" id="collapsible-nav-dropdown">
+                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.2">
                                     Another action
                                 </NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action5">
-                                    Something else here
+                                <NavDropdown.Item href="#action/3.4">
+                                    Separated link
                                 </NavDropdown.Item>
                             </NavDropdown>
-                            <Nav.Link href="#" disabled>
-                                Link
+                        </Nav>
+                        <Nav>
+                            <Nav.Link href="#deets">More deets</Nav.Link>
+                            <Nav.Link eventKey={2} href="#memes">
+                                Dank memes
                             </Nav.Link>
                         </Nav>
-                        <Form className="d-flex">
-                            <Form.Control
-                                type="search"
-                                placeholder="Search"
-                                className="me-2"
-                                aria-label="Search"
-                            />
-                            <Button variant="outline-success">Search</Button>
-                        </Form>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
+
             <Routes>
                 <Route path="/" element={<div className="big_content">
                     <div className="foreign_box" onClick={() => {

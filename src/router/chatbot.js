@@ -1,50 +1,46 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-function Chatbot(props) {
+function Chatbot() {
     const [chatHistory, setChatHistory] = useState([]);
     const [responses, setResponses] = useState([]);
 
     const chatContainerRef = useRef(null);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/chatdata')
+        axios.get('http://localhost:5000/newmark')
             .then((result) => {
-                console.log(result.data[0]);
-                setResponses([result.data[0]]);
+                console.log(result.data);
+                setResponses(result.data); // 수정된 부분
             })
             .catch(() => {
                 console.log('실패');
             });
     }, []);
 
+
     function welcomeMessage() {
-        let message = '코드랩 쇼핑몰에 오신 것을 환영합니다. ' +
-            '저희 쇼핑몰은 신발, 의류 전문몰입니다. ' +
-            '아래 주제에 대해서 문의해주세요.';
-
-        let level1Message = responses.map(item => (
-            item.level1.map(subItem => (
-                `${subItem.number}: ${subItem.name}`
-            ))
-        )).join(', ');
-
-        return message + '\n' + level1Message;
+        let message = '안녕하세요 서울시 지도페이지입니다. ' +
+            '위치를 알고 싶은 상호명을 입력해주세요.';
+        return message;
     }
+
 
     function sendMessage() {
         const userInput = document.getElementById('textInput').value;
         if (userInput.trim() !== '') {
             appendMessage('User', userInput);
-            const selectedCategory = findSelectedCategory(userInput, responses);
-            if (selectedCategory) {
-                showSubCategories(selectedCategory);
+            const centerInfo = findRecyclingCenterInfo(userInput, responses);
+            if (centerInfo) {
+                const responseMessage = `재활용센터명: ${centerInfo.name}\n주소: ${centerInfo.address}\n전화번호: ${centerInfo.phone}\n웹사이트: ${centerInfo.website}`;
+                appendMessage('ChatBot', responseMessage);
             } else {
-                appendMessage('ChatBot', '준비중인 메뉴입니다^^');
+                appendMessage('ChatBot', '찾을 수 없는 재활용센터명입니다.');
             }
             document.getElementById('textInput').value = '';
         }
     }
+
 
     function handleKeyDown(event) {
         if (event.key === 'Enter') {
@@ -52,48 +48,39 @@ function Chatbot(props) {
         }
     }
 
-    function findSelectedCategory(userInput, responses) {
-        for (let i = 0; i < responses.length; i++) {
-            const categories = responses[i].level1;
-            for (let j = 0; j < categories.length; j++) {
-                const category = categories[j];
-                if (userInput === category.name || userInput === category.number.toString()) {
-                    return category;
-                }
-                const subCategories = category.level2;
-                for (let k = 0; k < subCategories.length; k++) {
-                    const subCategory = subCategories[k];
-                    if (userInput === subCategory.name || userInput === subCategory.number.toString()) {
-                        return subCategory;
-                    }
-                }
-            }
+    function findRecyclingCenterInfo(userInput, responses) {
+        // responses 배열을 검색하여 사용자 입력과 일치하는 재활용센터명을 찾습니다.
+        const center = responses.find(item => item.재활용센터명.toLowerCase() === userInput.toLowerCase());
+
+        // 해당 센터를 찾았다면 홈페이지 주소를 반환합니다.
+        if (center) {
+            return {
+                name: center.재활용센터명,
+                address: center.소재지도로명주소,
+                phone: center.운영기관전화번호,
+                website: center.홈페이지주소 || '홈페이지 정보가 없습니다.' // 홈페이지 정보가 없는 경우 대비
+            };
         }
+
         return null;
     }
 
-    function showSubCategories(category) {
-        let message = '';
-        if (!category.level2) {
-            message = category.message;
-        } else {
-            const subCategories = category.level2;
-            if (subCategories) {
-                for (let i = 0; i < subCategories.length; i++) {
-                    message += `${subCategories[i].number}. ${subCategories[i].name}<br>`;
-                }
-            } else {
-                message = '하위 카테고리가 없습니다.';
+    function appendMessage(sender, message) {
+        try {
+            const newMessage = { sender, message };
+            setChatHistory(prevChatHistory => [...prevChatHistory, newMessage]);
+
+            // 채팅 컨테이너의 스크롤을 자동으로 최하단으로 이동시킵니다.
+            if (chatContainerRef.current) {
+                setTimeout(() => {
+                    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                }, 100); // 비동기 방식으로 즉시 업데이트가 아닌 약간의 지연 후 스크롤, UI 업데이트를 보장
             }
+        } catch (error) {
+            console.error("Error appending message: ", error);
         }
-        appendMessage('Chatbot', message);
     }
 
-    function appendMessage(sender, message) {
-        const newMessage = { sender, message };
-        setChatHistory(prevChatHistory => [...prevChatHistory, newMessage]);
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
 
     return (
         <div className="Chatbot">

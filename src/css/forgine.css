@@ -21,8 +21,20 @@
     margin: 0 auto;
 
 }
+.chat_box {
+    border-radius: 30px;
+    padding: 20px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 150px; /* 원하는 너비로 조정 */
+    height:100px; /* 원하는 높이로 조정 */
+}
 
-
+.chat_box p {
+    margin: 0 auto;
+    font-size: 30px; /* 내부 텍스트의 크기를 조절 */
+}
 .content{
     display: inline-block;
     border: 1px solid lightgray;
@@ -31,16 +43,6 @@
     background: white;
     margin: 20px 10px;
 }
-
-/*.slide-in {*/
-/*    opacity: 1; !* 슬라이드 인 상태에서는 불투명하게 설정 *!*/
-/*}*/
-
-/*.slide-out {*/
-/*    opacity: 0; !* 슬라이드 아웃 상태에서는 투명하게 설정 *!*/
-/*}*/
-
-
 .Chatbot{
     width: 550px;
     height: 300px;
