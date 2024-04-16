@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import MyMap, {AirStatus, WeatherStatus} from "./KakaoMap";
-import {Button, Nav, Navbar, NavDropdown, Offcanvas} from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import Chatbot from "./chatbot";
-import './forgine.css'
+import '../css/forgine.css'
 
 function Forgine(props) {
     let navigate = useNavigate();
-    const [showSideNav, setShowSideNav] = useState(false);
     let [chatbot, setChatbot] = useState(false)
 
     const toDay = new Date();

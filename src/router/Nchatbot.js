@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {GoPaperAirplane} from "react-icons/go";
 import {IoClose} from "react-icons/io5";
 import {RiRobot2Fill} from "react-icons/ri";
-import "../css/ChatBot.css";
+import "./ChatBot.css";
 
 function Chatbot() {
     const [chatHistory, setChatHistory] = useState([]);
@@ -21,6 +21,7 @@ function Chatbot() {
                 console.log('실패');
             });
     }, []);
+
 
     function welcomeMessage() {
         let message = '안녕하세요.\n서울시 지도페이지입니다.\n' + '위치를 알고 싶은 상호명을 입력해주세요.';
@@ -69,7 +70,7 @@ function Chatbot() {
 
     function appendMessage(sender, message) {
         try {
-            const newMessage = { sender, message };
+            const newMessage = {sender, message};
             setChatHistory(prevChatHistory => [...prevChatHistory, newMessage]);
 
             // 채팅 컨테이너의 스크롤을 자동으로 최하단으로 이동시킵니다.
