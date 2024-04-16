@@ -1,10 +1,25 @@
-.App {
-  text-align: center;
+/* base style */
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
 }
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  overflow: hidden;
 }
+
+.bg-body-tertiary {
+  z-index: 999;
+  height: 70px;
+  background: linear-gradient(45deg, #3496fe, #178844 50%);
+  color: #fff;
+  border-bottom: 1px solid #eee;
+}
+.bg-body-tertiary svg { font-size: 35px; }
+.bg-body-tertiary a { color: #fff; }
 
 div {
   box-sizing: border-box;

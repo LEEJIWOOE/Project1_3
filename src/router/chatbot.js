@@ -1,5 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
+import {GoPaperAirplane} from "react-icons/go";
+import {IoClose} from "react-icons/io5";
+import {RiRobot2Fill} from "react-icons/ri";
+import "./ChatBot.css";
 
 function Chatbot() {
     const [chatHistory, setChatHistory] = useState([]);
@@ -20,8 +24,7 @@ function Chatbot() {
 
 
     function welcomeMessage() {
-        let message = '안녕하세요 서울시 지도페이지입니다. ' +
-            '위치를 알고 싶은 상호명을 입력해주세요.';
+        let message = '안녕하세요.\n서울시 지도페이지입니다.\n' + '위치를 알고 싶은 상호명을 입력해주세요.';
         return message;
     }
 
@@ -67,7 +70,7 @@ function Chatbot() {
 
     function appendMessage(sender, message) {
         try {
-            const newMessage = { sender, message };
+            const newMessage = {sender, message};
             setChatHistory(prevChatHistory => [...prevChatHistory, newMessage]);
 
             // 채팅 컨테이너의 스크롤을 자동으로 최하단으로 이동시킵니다.
@@ -84,7 +87,21 @@ function Chatbot() {
 
     return (
         <div className="Chatbot">
-            {welcomeMessage()}
+            <div className="chatbot-header">
+                <span className="chat-icon">
+                    <RiRobot2Fill/>
+                </span>
+                <div className="bot-info">
+                    <h5>EReHubBot</h5>
+                    <p>Visiters Supporter</p>
+                </div>
+                <button className="chat-close-btn">
+                    <IoClose/>
+                </button>
+            </div>
+            <div className="welcome-message">
+                {welcomeMessage()}
+            </div>
             <div ref={chatContainerRef}>
                 {chatHistory.map((message, index) => (
                     <div key={index}>
@@ -92,8 +109,11 @@ function Chatbot() {
                     </div>
                 ))}
             </div>
-            <input id="textInput" type="text" placeholder="메세지를 입력하세요." onKeyDown={handleKeyDown} />
-            <button onClick={sendMessage}>전송</button>
+            <div className="sendMessage">
+                <input id="textInput" type="text" placeholder="메세지를 입력하세요." onKeyDown={handleKeyDown}/>
+                <button onClick={sendMessage}><GoPaperAirplane/>
+                </button>
+            </div>
         </div>
     );
 }

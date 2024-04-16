@@ -1,6 +1,7 @@
-import { Map, MapMarker, MapTypeId } from "react-kakao-maps-sdk";
-import { useEffect, useState } from "react";
-import "bootstrap/js/dist/collapse";
+import {Map, MapMarker, MapTypeId} from "react-kakao-maps-sdk";
+import {useEffect, useState} from "react";
+// import "bootstrap/js/dist/collapse";
+import "./KakaoMap.css";
 
 function MyMap() {
     const [traffic, setTraffic] = useState(false);
@@ -33,7 +34,7 @@ function MyMap() {
             const jsonData = await response.json();
 
             const newMarkers = jsonData.map((item, index) => {
-                const { 위도, 경도, 재활용센터명 } = item;
+                const {위도, 경도, 재활용센터명} = item;
                 if (!위도 || !경도) {
                     console.error('Invalid latitude or longitude:', item);
                     return null;
@@ -41,7 +42,7 @@ function MyMap() {
                 return (
                     <MapMarker
                         key={index}
-                        position={{ lat: parseFloat(위도), lng: parseFloat(경도) }}
+                        position={{lat: parseFloat(위도), lng: parseFloat(경도)}}
                         title={재활용센터명}
                     />
                 );
@@ -60,24 +61,73 @@ function MyMap() {
     }, []);
 
     return (
-        <div style={{ position: "relative" }}>
+
+        <div
+            className="map-con"
+            // style={{position: "relative"}}
+        >
             <Map
                 center={{lat: 37.5665, lng: 126.9780}}
-                style={{ width: "100em", height: "500px", float: "right", zIndex: 1 }}
-                level={10}
+                style={{
+                    width: "100vw",
+                    height: "calc(50vh - 35px)",
+                    float: "left"
+                }}
+                level={5}
             >
                 {showMarkers && markers}
                 {traffic && <MapTypeId type="TRAFFIC"/>}
             </Map>
-            <button style={{ position: "absolute", right: 10, top: 20, zIndex: 2 }} onClick={toggleTraffic}>
-                교통정보
-            </button>
-            {/* 재활용 버튼 */}
-            <button style={{ position: "absolute", right: 500, top: 20, zIndex: 2 }} onClick={toggleMarkers}>
-                재활용센터
-            </button>
+            <div className="map-btn">
+                <ul>
+                    <li><a href="#" onClick={toggleTraffic}>교통정보</a></li>
+                    <li><a href="#" onClick={toggleMarkers}>재활용</a></li>
+                </ul>
+                {/*<button*/}
+                {/*    style={ {zIndex: 2} } onClick={toggleTraffic}>*/}
+                {/*    교통정보*/}
+                {/*</button>*/}
+                {/*<button*/}
+                {/*    style={ {zIndex: 2} } onClick={toggleMarkers}>*/}
+                {/*    /!* 재활용 버튼 *!/*/}
+                {/*    재활용센터*/}
+                {/*</button>*/}
+            </div>
+
         </div>
     );
 }
 
+function AirStatus(){
+
+    return (
+        <Map
+            center={{ lat: 33.5563, lng: 126.79581 }}
+            style={{
+                width: "50%",
+                height:"100%",
+                float: "left"
+        }}>
+            <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
+                <div style={{color:"#000"}}>Hello World!</div>
+            </MapMarker>
+        </Map>
+    );
+}
+
+function WeatherStatus(){
+
+    return (
+        <Map
+            center={{ lat: 33.5563, lng: 126.79581 }}
+            style={{ width: "50%", height:"100%" }}
+        >
+            <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
+                <div style={{color:"#000"}}>Hello World!</div>
+            </MapMarker>
+        </Map>
+    );
+}
+
+export {AirStatus, WeatherStatus };
 export default MyMap;

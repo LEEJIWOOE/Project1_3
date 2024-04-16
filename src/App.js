@@ -1,43 +1,58 @@
 import './App.css';
 import Forgine from "./router/forgine"
 import MyMap from "./router/KakaoMap"
-import React, { useState, useEffect } from "react";
-import { Button, Container, Form, Nav, Navbar, NavDropdown, Offcanvas } from 'react-bootstrap';
+import React, {useState, useEffect} from "react";
+import {Button, Container, Form, Nav, Navbar, NavDropdown, Offcanvas} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Route, Routes, Link, useNavigate, Outlet } from 'react-router-dom'
+import {Route, Routes, Link, useNavigate, Outlet} from 'react-router-dom'
+import {FiAlignJustify} from 'react-icons/fi';
+import {TiWeatherWindyCloudy} from "react-icons/ti";
 
 function App() {
     let navigate = useNavigate();
 
+    const toDay = new Date();
+    const formatDate = `${toDay.getFullYear()}-${toDay.getMonth() + 1}-${toDay.getDate()}`;
 
     return (
         <div className="App">
-            <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
+
+            <Navbar
+                style={{zIndex: 99}}
+                collapseOnSelect expand="lg"
+                className="bg-body-tertiary">
                 <Container>
-                    <Navbar.Brand href="/">React-Bootstrap</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <TiWeatherWindyCloudy/>
+                    <Navbar.Brand href="/">대기환경정보</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="/forgine">forgine</Nav.Link>
-                            <Nav.Link href="#pricing">Pricing</Nav.Link>
-                            <NavDropdown title="Dropdown" id="collapsible-nav-dropdown">
-                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">
-                                    Another action
-                                </NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">
-                                    Separated link
-                                </NavDropdown.Item>
-                            </NavDropdown>
+                            <Nav.Link href="/forgine">대기질현황</Nav.Link>
+                            <Nav.Link href="#pricing">대기오염예보</Nav.Link>
+                            {/*<NavDropdown title="Dropdown" id="collapsible-nav-dropdown">*/}
+                            {/*    <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>*/}
+                            {/*    <NavDropdown.Item href="#action/3.2">*/}
+                            {/*        Another action*/}
+                            {/*    </NavDropdown.Item>*/}
+                            {/*    <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>*/}
+                            {/*    <NavDropdown.Divider />*/}
+                            {/*    <NavDropdown.Item href="#action/3.4">*/}
+                            {/*        Separated link*/}
+                            {/*    </NavDropdown.Item>*/}
+                            {/*</NavDropdown>*/}
                         </Nav>
-                        <Nav>
-                            <Nav.Link href="#deets">More deets</Nav.Link>
-                            <Nav.Link eventKey={2} href="#memes">
-                                Dank memes
-                            </Nav.Link>
-                        </Nav>
+                        <div className="todayCurrent">
+                            <Nav>
+                                <Nav>{formatDate}</Nav>
+                                <Nav.Link
+                                    as="a"
+                                    href="https://www.weather.go.kr/w/index.do"
+                                    target="_blank"
+                                >현재기온
+                                </Nav.Link>
+                            </Nav>
+                        </div>
+                        <FiAlignJustify/>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
@@ -51,9 +66,10 @@ function App() {
                         navigate('/login')
                     }}><h1>공항</h1></div>
                 </div>}></Route>
-                <Route path="/forgine" element={<Forgine />} />
-                <Route path="/MyMap" element={<MyMap />} />
+                <Route path="/forgine" element={<Forgine/>}/>
+                <Route path="/MyMap" element={<MyMap/>}/>
             </Routes>
+
         </div>
     );
 }

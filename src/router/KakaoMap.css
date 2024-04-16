@@ -1,0 +1,22 @@
+.map-btn {
+    position: absolute;
+    bottom: 47%;
+    right: 37px;
+    z-index: 99;
+    text-align: center;
+}
+.map-btn ul { display: flex; padding: 0; margin: 0; }
+
+.map-btn li {
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border: none;
+    border-radius: 50px;
+    background: #16a085;
+    margin: 10px;
+}
+.map-btn a {
+    color: #fff;
+    text-decoration: none;
+}

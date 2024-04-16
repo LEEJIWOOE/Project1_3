@@ -1,0 +1,78 @@
+.Chatbot {
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    white-space: pre-wrap;
+}
+.chatbot-header {
+    height: 60px;
+    color: #fff;
+    /*display: block;*/
+    align-items: center;
+    padding: 10px;
+    background: #16a085;
+}
+.bot-info {
+    font-size: 0.9em;
+    float: left;
+    padding-left: 10px;
+    margin: 0;
+}
+.bot-info h5, .bot-info p { margin: 0; }
+.chat-icon {
+    text-align: center;
+    line-height: 35px;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: left;
+}
+.chat-icon svg {
+    font-size: 1.5em;
+    color: #16a085;
+}
+.chat-close-btn {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    border: 0;
+    background: none;
+    color: #fff;
+}
+/* send message area */
+.sendMessage {
+    width: 100%;
+    height: 80px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border-top: 1px solid #eee;
+    display: flex;
+    padding: 10px;
+}
+.sendMessage input {
+    width: 100%;
+    border: 0;
+    border-radius: 10px;
+    font-size: 0.8em;
+    padding: 10px;
+}
+.sendMessage button {
+    background: none;
+    border: 0;
+    color: darkgrey;
+}
+/* chat message */
+.welcome-message {
+    width: 65%;
+    font-size: 0.85em;
+    border: 1px solid #eee;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 20px;
+}
