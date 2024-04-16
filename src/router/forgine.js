@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import MyMap, {AirStatus, WeatherStatus} from "./KakaoMap";
 import { Link, useNavigate } from 'react-router-dom';
 import Chatbot from "./chatbot";
+import { IoLogoWechat } from "react-icons/io5";
+
 import '../css/forgine.css'
+// import '../css/ChatBot.css'
 
 function Forgine(props) {
     let navigate = useNavigate();
@@ -10,7 +13,7 @@ function Forgine(props) {
 
     const toDay = new Date();
     const formatDate = `${toDay.getFullYear()}년 ${toDay.getMonth() + 1}월 ${toDay.getDate()}일`;
-    
+
     return (
         <div className="App">
 
@@ -77,11 +80,18 @@ function Forgine(props) {
                 <WeatherStatus/>
             </div>
             <div className="Chatbot">
+                {/*<button*/}
+                {/*    style={{ zIndex:99 }}*/}
+                {/*    onClick={openChat}*/}
+                {/*>Chat</button>*/}
+                {/*{openChat && <Chatbot onClose={closeChat} />}*/}
                 <button
+                    className="chat-open-btn"
+                    // onClick={openChat}
                     onClick={() => {
-                    setChatbot(!chatbot)
-                }}>CHAT
-                </button>{' '}
+                        setChatbot(!chatbot)
+                    }}><IoLogoWechat />
+                </button>{''}
                 { chatbot && <Chatbot />}
             </div>
 
