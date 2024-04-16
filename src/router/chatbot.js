@@ -104,7 +104,7 @@ function Chatbot() {
             <div ref={chatContainerRef}>
                 {chatHistory.map((message, index) => (
                     <div key={index}>
-                        <strong>{message.sender}:</strong> {message.message}
+                        <strong>{message.sender}:</strong> <div>{message.message}</div>
                     </div>
                 ))}
             </div>

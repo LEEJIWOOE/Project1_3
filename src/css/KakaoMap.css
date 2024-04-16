@@ -7,7 +7,7 @@
 }
 .map-btn ul { display: flex; padding: 0; margin: 0; }
 
-.map-btn li {
+.map-btn button {
     width: 80px;
     height: 80px;
     line-height: 80px;

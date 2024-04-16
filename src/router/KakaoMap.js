@@ -294,12 +294,12 @@ function MyMap() {
             </Map>
             <div className="map-btn">
                 <ul>
-                    <li><a onClick={toggleTraffic}>교통정보</a></li>
-                    <li><a onClick={toggleRoadView}>로드뷰</a></li>
-                    <li><a onClick={toggleTerrain}>지형정보</a></li>
-                    <li><a onClick={toggleUseDistrict}>지적편집도</a></li>
-                    <li><a onClick={toggleMarkers}>재활용센터</a></li>
-                    <li><a onClick={moveToCurrentLocation}>내 위치</a></li>
+                    <button onClick={toggleTraffic}>교통정보</button>
+                    <button onClick={toggleRoadView}>로드뷰</button>
+                    <button onClick={toggleTerrain}>지형정보</button>
+                    <button onClick={toggleUseDistrict}>지적편집도</button>
+                    <button onClick={toggleMarkers}>재활용센터</button>
+                    <button onClick={moveToCurrentLocation}>내 위치</button>
                 </ul>
             </div>
         </div>
