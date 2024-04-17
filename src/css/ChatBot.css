@@ -4,13 +4,12 @@
     border-radius: 10px 10px 0 0;
     overflow: hidden;
     position: fixed;
-    left: 2%;
-    bottom: 2%;
+    left: 10%;
+    bottom: 5%;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
     white-space: pre-wrap;
     background: #fff;
     line-height: 1em;
-    box-sizing: border-box;
 }
 .chatbot-header {
     height: 60px;
@@ -50,14 +49,14 @@
 }
 .Chat-con {
     width: 95%;
-    height: 70%;
+    height: 75%;
     margin: 0 auto;
     overflow-y: auto;
 }
 /* send message area */
 .sendMessage {
     width: 100%;
-    height: 100%;
+    height: calc(25% - 60px);
     border-top: 1px solid #ccc;
     padding: 10px;
     display: flex;
@@ -70,13 +69,19 @@
     border: 0;
     border-radius: 10px;
     font-size: 0.8em;
-    padding: 10px;
+    padding: 5px;
+    background: #eee;
+}
+.sendMessage input:focus {
+    outline: none;
+    background: #fff;
 }
 .sendMessage button {
     background: none;
     border: 0;
     color: darkgrey;
     display: flex;
+    padding-left: 10px;
 
 }
 /* chat message */
@@ -84,8 +89,29 @@
     width: 60%;
     text-align: left;
     font-size: 0.85em;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px 20px 20px 0;
     padding: 10px;
     margin: 10px;
+}
+
+/* send message style */
+.user, .chatbot {
+    width: 60%;
+    padding: 5px;
+    margin: 10px;
+    font-size: 0.8em;
+}
+.user {
+    float: right;
+    /*text-align: right;*/
+    background: #eee;
+    border-radius: 20px 20px 0 20px;
+}
+.chatbot {
+    float: left;
+    /*text-align: left;*/
+    padding-left: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px 20px 20px 0;
 }

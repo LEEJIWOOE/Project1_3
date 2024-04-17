@@ -258,8 +258,8 @@ function MyMap() {
         >
             <Map
                 center={{lat: 37.558185572111356, lng: 127.00091673775184}}
-                style={{ width: "100vw",
-                    height: "calc(50vh - 35px)",
+                style={{ width: "100%",
+                    height: "100vh",
                     float: "left"}}
                 level={9}
                 onCreate={handleMapCreate} // 지도 객체가 생성되면 setMap을 통해 상태 업데이트

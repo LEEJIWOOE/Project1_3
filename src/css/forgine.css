@@ -23,9 +23,9 @@ table { width: 100%; }
     line-height: 76px;
     text-align: center;
     background: #178844;
-    border-radius: 100px;
+    border-radius: 100px 100px 0 100px;
     position: absolute;
-    left: 2%;
+    right: 3%;
     bottom: 2%;
     z-index: 999;
     /*transition: transform 0.3s;*/
@@ -44,5 +44,5 @@ table { width: 100%; }
 }
 .Map {
     width: 100%;
-    height: calc(50vh - 35px);
+    /*height: calc(50vh - 35px);*/
 }

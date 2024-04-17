@@ -27,38 +27,18 @@ function Chatbot() {
         return message;
     }
 
-    // function sendMessage() {
-    //     const userInput = document.getElementById('textInput').value;
-    //     if (userInput.trim() !== '') {
-    //         appendMessage('User', userInput);
-    //         const centerInfo = findRecyclingCenterInfo(userInput, responses);
-    //         if (centerInfo) {
-    //             const responseMessage = `재활용센터명: ${centerInfo.name}\n주소: ${centerInfo.address}\n전화번호: ${centerInfo.phone}\n웹사이트: ${centerInfo.website}`;
-    //             appendMessage('ChatBot', responseMessage);
-    //         } else {
-    //             appendMessage('ChatBot', '찾을 수 없는 재활용센터명입니다.');
-    //         }
-    //         document.getElementById('textInput').value = '';
-    //     }
-    // }
+
     function sendMessage() {
         const userInput = document.getElementById('textInput').value;
         if (userInput.trim() !== '') {
-            // 사용자 메시지를 화면에 표시
-            appendMessage('user', userInput);
-
-            // 사용자 입력을 분석하여 챗봇의 응답을 결정
+            appendMessage('User', userInput);
             const centerInfo = findRecyclingCenterInfo(userInput, responses);
             if (centerInfo) {
-                // 챗봇의 응답을 화면에 표시
                 const responseMessage = `재활용센터명: ${centerInfo.name}\n주소: ${centerInfo.address}\n전화번호: ${centerInfo.phone}\n웹사이트: ${centerInfo.website}`;
-                appendMessage('chatbot', responseMessage);
+                appendMessage('ChatBot', responseMessage);
             } else {
-                // 챗봇의 응답을 화면에 표시
-                appendMessage('chatbot', '찾을 수 없는 재활용센터명입니다.');
+                appendMessage('ChatBot', '찾을 수 없는 재활용센터명입니다.');
             }
-
-            // 입력 필드 비우기
             document.getElementById('textInput').value = '';
         }
     }
@@ -122,26 +102,19 @@ function Chatbot() {
                 </button>
             </div>
             <div className="Chat-con">
-                {/*/!*<div className="welcome-message">*!/*/}
-                {/*<p className="welcome-message">{welcomeMessage()}</p>*/}
-                {/*/!*</div>*!/*/}
-                {/*<div ref={chatContainerRef}>*/}
-                {/*    {chatHistory.map((message, index) => (*/}
-                {/*        <div key={index}>*/}
-                {/*            <div>*/}
-                {/*                /!*<strong>{message.sender}:</strong>*!/*/}
-                {/*                /!*<p>{message.message}</p>*!/*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    ))}*/}
-                {/*</div>*/}
+                {/*<div className="welcome-message">*/}
                 <p className="welcome-message">{welcomeMessage()}</p>
+                {/*</div>*/}
                 <div ref={chatContainerRef}>
                     {chatHistory.map((message, index) => (
-                        <div key={index} className={message.sender === 'user' ? 'user' : 'chatbot'}>
-                            {/* 사용자와 챗봇의 메세지를 나타내는 클래스 지정 */}
-                            {/*<strong>{message.sender}</strong>*/}
-                            <p>{message.message}</p>
+                        <div key={index}>
+                            <div>
+                                <strong>{message.sender}:</strong>
+                                <p>{message.message}</p>
+                            </div>
+                            {/*<div>*/}
+                            {/*    <strong>{message.message}</strong>*/}
+                            {/*</div>*/}
                         </div>
                     ))}
                 </div>
