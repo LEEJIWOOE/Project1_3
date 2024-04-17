@@ -1,5 +1,5 @@
 import {Map, MapMarker, MapTypeControl, MapTypeId, ZoomControl, Polygon, MapInfoWindow} from "react-kakao-maps-sdk";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import proj4 from 'proj4';
 import "bootstrap/js/dist/collapse";
 import "../css/KakaoMap.css";
@@ -10,7 +10,6 @@ function MyMap() {
     const [mapTypeId, setMapTypeId] = useState();
     const [markers, setMarkers] = useState([]);
     const [showMarkers, setShowMarkers] = useState(false); // 새로운 상태 추가
-
 
     const [cityData, setCityData] = useState([]);
 
@@ -47,7 +46,6 @@ function MyMap() {
         }
     }, [map, center, isLoading]);
 
-
     const handleMapCreate = (map) => {
         const initialCenter = new kakao.maps.LatLng(37.558185572111356, 127.00091673775184);
         map.setCenter(initialCenter);
@@ -55,8 +53,6 @@ function MyMap() {
         setMap(map);
     };
 
-
-    console.log(center)
 
 // 사용자 위치로 이동하는 함수
     const moveToCurrentLocation = () => {
@@ -227,6 +223,35 @@ function MyMap() {
         fetchData();
     }, []);
 
+    const sidos = ['강원특별자치도', '경기도', '경상남도', '경상북도', '광주광역시', '대구광역시', '대전광역시', '부산광역시', '서울특별시', '인천광역시', '울산광역시', '전라남도', '전라북도', '제주특별자치도', '충청남도'];
+    const [allData, setAllData] = useState([]); // 전체 데이터
+    const [displayData, setDisplayData] = useState([]); // 화면에 표시할 데이터
+    const [selectedSido, setSelectedSido] = useState(null); // 선택된
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/zero');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const jsonData = await response.json();
+                setAllData(jsonData); // 전체 데이터를 상태에 저장
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+// 시도 선택 핸들러
+    const handleSidoSelection = (sido) => {
+        const filteredData = allData.filter(item => item.시도 === sido);
+        setDisplayData(filteredData); // 선택된 시도에 해당하는 데이터를 디스플레이 데이터로 설정
+        setSelectedSido(sido); // 선택된 시도 상태 업데이트
+    };
+
+
     return (
         <div
             className="map-con"
@@ -291,15 +316,26 @@ function MyMap() {
                 )}
                 {showMarkers && markers}
                 {mapTypeId && <MapTypeId type={mapTypeId}/>}
+                {displayData.map((item, index) => (
+                    <MapMarker
+                        key={index}
+                        position={{ lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) }}
+                        title={item.name}
+                    />
+                ))}
             </Map>
             <div className="map-btn">
                 <ul>
                     <button onClick={toggleTraffic}>교통정보</button>
                     <button onClick={toggleRoadView}>로드뷰</button>
-                    <button onClick={toggleTerrain}>지형정보</button>
                     <button onClick={toggleUseDistrict}>지적편집도</button>
                     <button onClick={toggleMarkers}>재활용센터</button>
                     <button onClick={moveToCurrentLocation}>내 위치</button>
+                    <div>
+                        {sidos.map(sido => (
+                            <button key={sido} onClick={() => handleSidoSelection(sido)}>{sido}</button>
+                        ))}
+                    </div>
                 </ul>
             </div>
         </div>
@@ -307,34 +343,25 @@ function MyMap() {
 }
 
 
-function AirStatus(){
+function AirStatus() {
 
     return (
-        <Map
-            center={{ lat: 33.5563, lng: 126.79581 }}
-            style={{
-                width: "50%",
-                height:"100%",
-                float: "left"
-            }}>
-            <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
-                <div style={{color:"#000"}}>Hello World!</div>
-            </MapMarker>
-        </Map>
+        <>
+
+        </>
     );
 }
 
-function WeatherStatus(){
+function WeatherStatus() {
 
     return (
-        <Map
-            center={{ lat: 33.5563, lng: 126.79581 }}
-            style={{ width: "50%", height:"100%" }}
-        >
-            <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
-                <div style={{color:"#000"}}>Hello World!</div>
-            </MapMarker>
-        </Map>
+        <div className="model">
+            <img
+                style={{width: "43%", height: "auto", float: "right"}}
+                alt="초미세먼지 모델 한반도"
+                src="https://www.airkorea.or.kr/file/proxyImage?fileName=2024/04/16/AQFv1_09h.20240414.KNU_09_01.PM2P5.2days.ani.gif"
+            />
+        </div>
     );
 }
 

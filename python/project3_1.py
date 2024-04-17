@@ -2,12 +2,28 @@ from flask import Flask, jsonify
 from flask_restful import Resource, Api
 from flask_cors import CORS
 import requests
+import pandas as pd
+import json
 import geopandas as gpd
 
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
 app.debug = True
+
+
+class Zero(Resource):
+    def get(self):
+            zero = pd.read_csv(
+                'C:\\KYB\\Project\\2_WepProject\\3_React\\React_clone_test\\kyb_study\\server\\public\\csv\\napron_final.csv',
+                encoding='utf-8')
+            zero_json = zero.to_json(orient='records')  # 'records' 형식으로 JSON 변환
+            zero_dict = json.loads(zero_json)  # JSON 문자열을 Python 리스트(딕셔너리의 리스트)로 변환
+            return jsonify(zero_dict)  # 리스트를 jsonify로 반환
+
+
+api.add_resource(Zero, '/zero')
+
 
 class City(Resource):
     def get(self):  # 메서드 이름을 get으로 변경하고 self 추가
