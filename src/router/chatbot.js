@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {GoPaperAirplane} from "react-icons/go";
-import {IoClose} from "react-icons/io5";
+import {IoClose, IoChatboxEllipses} from "react-icons/io5";
 import {RiRobot2Fill} from "react-icons/ri";
 import "../css/ChatBot.css";
 
@@ -69,7 +69,7 @@ function Chatbot() {
 
     function appendMessage(sender, message) {
         try {
-            const newMessage = { sender, message };
+            const newMessage = {sender, message};
             setChatHistory(prevChatHistory => [...prevChatHistory, newMessage]);
 
             // 채팅 컨테이너의 스크롤을 자동으로 최하단으로 이동시킵니다.
@@ -83,9 +83,9 @@ function Chatbot() {
         }
     }
 
-
     return (
-        <div className="Chatbot">
+        <div className="Chatbot-con">
+
             <div className="chatbot-header">
                 <span className="chat-icon">
                     <RiRobot2Fill/>
@@ -94,19 +94,30 @@ function Chatbot() {
                     <h5>EReHubBot</h5>
                     <p>Visiters Supporter</p>
                 </div>
-                <button className="chat-close-btn">
+                <button
+                    className="chat-close-btn"
+                    // onClick={handleClose}
+                >
                     <IoClose/>
                 </button>
             </div>
-            <div className="welcome-message">
-                {welcomeMessage()}
-            </div>
-            <div ref={chatContainerRef}>
-                {chatHistory.map((message, index) => (
-                    <div key={index}>
-                        <strong>{message.sender}:</strong> <div>{message.message}</div>
-                    </div>
-                ))}
+            <div className="Chat-con">
+                {/*<div className="welcome-message">*/}
+                <p className="welcome-message">{welcomeMessage()}</p>
+                {/*</div>*/}
+                <div ref={chatContainerRef}>
+                    {chatHistory.map((message, index) => (
+                        <div key={index}>
+                            <div>
+                                <strong>{message.sender}:</strong>
+                                <p>{message.message}</p>
+                            </div>
+                            {/*<div>*/}
+                            {/*    <strong>{message.message}</strong>*/}
+                            {/*</div>*/}
+                        </div>
+                    ))}
+                </div>
             </div>
             <div className="sendMessage">
                 <input id="textInput" type="text" placeholder="메세지를 입력하세요." onKeyDown={handleKeyDown}/>

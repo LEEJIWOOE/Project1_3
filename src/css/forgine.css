@@ -18,14 +18,29 @@
 table { width: 100%; }
 
 .Chatbot {
-    width: 300px;
-    height: 500px;
-    position: fixed;
-    left: 10px;
-    bottom: 10px;
+    width: 80px;
+    height: 80px;
+    line-height: 76px;
+    text-align: center;
+    background: #178844;
+    border-radius: 100px;
+    position: absolute;
+    left: 2%;
+    bottom: 2%;
     z-index: 999;
-    background: rgba(255, 255, 255);
-    /*padding: 20px;*/
+    /*transition: transform 0.3s;*/
+}
+.Chatbot:hover {
+    /*transform: translateY(-10px);*/
+}
+.chat-open-btn {
+    background: none;
+    border: none;
+}
+
+.chat-open-btn svg {
+    color: #fff;
+    font-size: 55px;
 }
 .Map {
     width: 100%;
