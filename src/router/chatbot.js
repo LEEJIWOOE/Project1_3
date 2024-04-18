@@ -1,7 +1,7 @@
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {GoPaperAirplane} from "react-icons/go";
-import {IoClose, IoChatboxEllipses} from "react-icons/io5";
+import {IoClose} from "react-icons/io5";
 import {RiRobot2Fill} from "react-icons/ri";
 import "../css/ChatBot.css";
 
@@ -11,81 +11,92 @@ function Chatbot() {
 
     const chatContainerRef = useRef(null);
 
+// 데이터 불러오기 예시
     useEffect(() => {
-        axios.get('http://localhost:5000/newmark')
-            .then((result) => {
-                console.log(result.data);
-                setResponses(result.data); // 수정된 부분
-            })
-            .catch(() => {
-                console.log('실패');
-            });
+        const fetchData = async (url) => {
+            try {
+                const result = await axios.get(url);
+                return result.data;
+            } catch (error) {
+                console.error(`Error fetching from ${url}: `, error);
+                return [];
+            }
+        };
+
+        const loadAllData = async () => {
+            const newMarkData = await fetchData('http://localhost:5000/newmark');
+            const zeroData = await fetchData('http://localhost:5000/zero');
+            const placesData = await fetchData('http://localhost:5000/places');
+
+            // 상태에 저장 혹은 추가적인 로직 구현
+            setResponses({ newMarkData, zeroData, placesData });
+        };
+
+        loadAllData();
     }, []);
+
 
     function welcomeMessage() {
         let message = '안녕하세요.\n서울시 지도페이지입니다.\n' + '위치를 알고 싶은 상호명을 입력해주세요.';
         return message;
     }
 
-    // function sendMessage() {
-    //     const userInput = document.getElementById('textInput').value;
-    //     if (userInput.trim() !== '') {
-    //         appendMessage('User', userInput);
-    //         const centerInfo = findRecyclingCenterInfo(userInput, responses);
-    //         if (centerInfo) {
-    //             const responseMessage = `재활용센터명: ${centerInfo.name}\n주소: ${centerInfo.address}\n전화번호: ${centerInfo.phone}\n웹사이트: ${centerInfo.website}`;
-    //             appendMessage('ChatBot', responseMessage);
-    //         } else {
-    //             appendMessage('ChatBot', '찾을 수 없는 재활용센터명입니다.');
-    //         }
-    //         document.getElementById('textInput').value = '';
-    //     }
-    // }
-    function sendMessage() {
-        const userInput = document.getElementById('textInput').value;
-        if (userInput.trim() !== '') {
-            // 사용자 메시지를 화면에 표시
-            appendMessage('user', userInput);
 
-            // 사용자 입력을 분석하여 챗봇의 응답을 결정
-            const centerInfo = findRecyclingCenterInfo(userInput, responses);
-            if (centerInfo) {
-                // 챗봇의 응답을 화면에 표시
-                const responseMessage = `재활용센터명: ${centerInfo.name}\n주소: ${centerInfo.address}\n전화번호: ${centerInfo.phone}\n웹사이트: ${centerInfo.website}`;
-                appendMessage('chatbot', responseMessage);
-            } else {
-                // 챗봇의 응답을 화면에 표시
-                appendMessage('chatbot', '찾을 수 없는 재활용센터명입니다.');
-            }
-
-            // 입력 필드 비우기
-            document.getElementById('textInput').value = '';
+    async function getReverseGeocodingData(latitude, longitude) {
+        try {
+            const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+                params: {
+                    lat: latitude,
+                    lon: longitude,
+                    format: 'json'
+                }
+            });
+            return response.data.display_name;  // 이 필드에 주소 정보가 포함되어 있습니다.
+        } catch (error) {
+            console.error('Failed to fetch address:', error);
+            return '주소를 불러오는 데 실패했습니다.';
         }
     }
 
+    async function sendMessage() {
+        const userInput = document.getElementById('textInput').value.toLowerCase().trim();
+        if (userInput !== '') {
+            appendMessage('User', userInput);
 
+            let responseMessage = '해당 정보를 찾을 수 없습니다.';
+
+            // 먼저 마커 정보를 검색
+            const markerInfo = responses.newMarkData.find(m => m.재활용센터명.toLowerCase().includes(userInput));
+            if (markerInfo) {
+                responseMessage = `재활용센터 관련 정보 입니다.\n센터명: ${markerInfo.재활용센터명}\n주소: ${markerInfo.소재지도로명주소}\n전화번호: ${markerInfo.운영기관전화번호}\n웹사이트: ${markerInfo.홈페이지주소 || '홈페이지 정보가 없습니다.'}`;
+                appendMessage('ChatBot', responseMessage);
+            } else {
+                // 마커 정보가 없으면 장소 정보를 검색
+                const placeInfo = responses.placesData.find(p => p.name.toLowerCase().includes(userInput));
+                if (placeInfo) {
+                    const address = await getReverseGeocodingData(placeInfo.latitude, placeInfo.longitude);
+                    responseMessage = `제로웨이트샵 입니다.\n장소명: ${placeInfo.name}\n주소: ${address}`;
+                    appendMessage('ChatBot', responseMessage);
+                } else {
+                    // 장소 정보도 없으면 zero 정보를 검색
+                    const zeroInfo = responses.zeroData.find(z => z.name.toLowerCase().includes(userInput));
+                    if (zeroInfo) {
+                        responseMessage = `네프론관련정보입니다. \n위치: ${zeroInfo.name}\n상세주소: ${zeroInfo.address}\n취급종류: ${zeroInfo.input_wastes}`;
+                        appendMessage('ChatBot', responseMessage);
+                    } else {
+                        appendMessage('ChatBot', responseMessage);
+                    }
+                }
+            }
+            document.getElementById('textInput').value = '';
+        }
+    }
     function handleKeyDown(event) {
         if (event.key === 'Enter') {
             sendMessage();
         }
     }
 
-    function findRecyclingCenterInfo(userInput, responses) {
-        // responses 배열을 검색하여 사용자 입력과 일치하는 재활용센터명을 찾습니다.
-        const center = responses.find(item => item.재활용센터명.toLowerCase() === userInput.toLowerCase());
-
-        // 해당 센터를 찾았다면 홈페이지 주소를 반환합니다.
-        if (center) {
-            return {
-                name: center.재활용센터명,
-                address: center.소재지도로명주소,
-                phone: center.운영기관전화번호,
-                website: center.홈페이지주소 || '홈페이지 정보가 없습니다.' // 홈페이지 정보가 없는 경우 대비
-            };
-        }
-
-        return null;
-    }
 
     function appendMessage(sender, message) {
         try {
@@ -103,9 +114,10 @@ function Chatbot() {
         }
     }
 
-    return (
-        <div className="Chatbot-con">
 
+
+    return (
+        <div className="Chatbot">
             <div className="chatbot-header">
                 <span className="chat-icon">
                     <RiRobot2Fill/>
@@ -114,37 +126,19 @@ function Chatbot() {
                     <h5>EReHubBot</h5>
                     <p>Visiters Supporter</p>
                 </div>
-                <button
-                    className="chat-close-btn"
-                    // onClick={handleClose}
-                >
+                <button className="chat-close-btn">
                     <IoClose/>
                 </button>
             </div>
-            <div className="Chat-con">
-                {/*/!*<div className="welcome-message">*!/*/}
-                {/*<p className="welcome-message">{welcomeMessage()}</p>*/}
-                {/*/!*</div>*!/*/}
-                {/*<div ref={chatContainerRef}>*/}
-                {/*    {chatHistory.map((message, index) => (*/}
-                {/*        <div key={index}>*/}
-                {/*            <div>*/}
-                {/*                /!*<strong>{message.sender}:</strong>*!/*/}
-                {/*                /!*<p>{message.message}</p>*!/*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    ))}*/}
-                {/*</div>*/}
-                <p className="welcome-message">{welcomeMessage()}</p>
-                <div ref={chatContainerRef}>
-                    {chatHistory.map((message, index) => (
-                        <div key={index} className={message.sender === 'user' ? 'user' : 'chatbot'}>
-                            {/* 사용자와 챗봇의 메세지를 나타내는 클래스 지정 */}
-                            {/*<strong>{message.sender}</strong>*/}
-                            <p>{message.message}</p>
-                        </div>
-                    ))}
-                </div>
+            <div className="welcome-message">
+                {welcomeMessage()}
+            </div>
+            <div ref={chatContainerRef}>
+                {chatHistory.map((message, index) => (
+                    <div key={index} className={`chat-message-${message.sender === 'User' ? 'user' : 'bot'}`}>
+                        <strong>{message.sender}:</strong> <div>{message.message}</div>
+                    </div>
+                ))}
             </div>
             <div className="sendMessage">
                 <input id="textInput" type="text" placeholder="메세지를 입력하세요." onKeyDown={handleKeyDown}/>

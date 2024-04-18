@@ -20,7 +20,6 @@ function MyMap() {
 
 
     useEffect(() => {
-        // 페이지 로드 시 현재 위치 가져오기
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -32,7 +31,8 @@ function MyMap() {
                 (err) => {
                     console.error("Error getting current position:", err);
                     setIsLoading(false); // 현재 위치를 가져오지 못하면 로딩 상태를 false로 변경
-                }
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 } // 고정확도 활성화, 10초 타임아웃, 1분 최대 캐시 나이
             );
         } else {
             console.error("Geolocation is not supported.");
@@ -40,11 +40,14 @@ function MyMap() {
         }
     }, []);
 
+
+
     useEffect(() => {
         if (map && !isLoading) {
             map.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
         }
     }, [map, center, isLoading]);
+
 
     const handleMapCreate = (map) => {
         const initialCenter = new kakao.maps.LatLng(37.558185572111356, 127.00091673775184);
@@ -223,10 +226,13 @@ function MyMap() {
         fetchData();
     }, []);
 
-    const sidos = ['강원특별자치도', '경기도', '경상남도', '경상북도', '광주광역시', '대구광역시', '대전광역시', '부산광역시', '서울특별시', '인천광역시', '울산광역시', '전라남도', '전라북도', '제주특별자치도', '충청남도'];
+    const [sidos, setSidos] = useState(['강원특별자치도', '경기도', '경상남도', '경상북도', '광주광역시', '대구광역시', '대전광역시', '부산광역시', '서울특별시', '인천광역시', '울산광역시', '전라남도', '전라북도', '제주특별자치도', '충청남도']);
+
+
     const [allData, setAllData] = useState([]); // 전체 데이터
     const [displayData, setDisplayData] = useState([]); // 화면에 표시할 데이터
     const [selectedSido, setSelectedSido] = useState(null); // 선택된
+    // MyMap 컴포넌트 내부
 
     useEffect(() => {
         const fetchData = async () => {
@@ -247,8 +253,8 @@ function MyMap() {
 // 시도 선택 핸들러
     const handleSidoSelection = (sido) => {
         const filteredData = allData.filter(item => item.시도 === sido);
-        setDisplayData(filteredData); // 선택된 시도에 해당하는 데이터를 디스플레이 데이터로 설정
-        setSelectedSido(sido); // 선택된 시도 상태 업데이트
+        setDisplayData(filteredData);
+        setSelectedSido(sido);
     };
 
 
@@ -258,8 +264,8 @@ function MyMap() {
         >
             <Map
                 center={{lat: 37.558185572111356, lng: 127.00091673775184}}
-                style={{ width: "100%",
-                    height: "100vh",
+                style={{ width: "100vw",
+                    height: "calc(50vh - 35px)",
                     float: "left"}}
                 level={9}
                 onCreate={handleMapCreate} // 지도 객체가 생성되면 setMap을 통해 상태 업데이트
@@ -331,11 +337,7 @@ function MyMap() {
                     <button onClick={toggleUseDistrict}>지적편집도</button>
                     <button onClick={toggleMarkers}>재활용센터</button>
                     <button onClick={moveToCurrentLocation}>내 위치</button>
-                    <div>
-                        {sidos.map(sido => (
-                            <button key={sido} onClick={() => handleSidoSelection(sido)}>{sido}</button>
-                        ))}
-                    </div>
+                    <AirStatus sidos={sidos} onSidoSelect={handleSidoSelection} />
                 </ul>
             </div>
         </div>
@@ -343,14 +345,28 @@ function MyMap() {
 }
 
 
-function AirStatus() {
+function AirStatus({ sidos, onSidoSelect }) {
+    console.log('Rendering AirStatus, sidos:', sidos);
+    if (!sidos) {
+        return <p>Loading...</p>;
+    }
 
     return (
-        <>
-
-        </>
+        <div style={{background : "red"}}>
+            {sidos.map((sido, index) => {
+                console.log(`Rendering button for ${sido} at index ${index}`);
+                return (
+                    <button key={sido} onClick={() => onSidoSelect(sido)}>
+                        {sido}
+                    </button>
+                );
+            })}
+        </div>
     );
 }
+
+
+
 
 function WeatherStatus() {
 
