@@ -2,13 +2,11 @@ import './App.css';
 import Forgine from "./router/forgine";
 import MyMap from "./router/KakaoMap";
 import Weather from "./router/weather";
+import AirStatus from "./router/Nefron";
 import React, { useState, useEffect } from "react";
-import {Button, Container, Form, Nav, Navbar, NavDropdown, Offcanvas} from 'react-bootstrap';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-import {Route, Routes, Link, useNavigate, Outlet} from 'react-router-dom'
+import {Route, Router, Routes, Link, useNavigate, Outlet} from 'react-router-dom'
 import {FiAlignJustify} from 'react-icons/fi';
 import {TiWeatherWindyCloudy} from "react-icons/ti";
-
 
 function App() {
     let navigate = useNavigate();
@@ -36,8 +34,12 @@ function App() {
                         <div className="myLocation">
                             <Weather/>
                         </div>
+                        <nav className="contents-btn">
+                            <AirStatus/>
+                        </nav>
                     </div>
                 </header>
+                <div className="main-contents"></div>
 
             </section>
 
@@ -53,11 +55,14 @@ function App() {
                     </div>}></Route>
                     <Route path="/forgine" element={<Forgine/>}/>
                     <Route path="/MyMap" element={<MyMap/>}/>
+
                 </Routes>
             </section>
 
         </div>
     );
 }
+
+
 
 export default App;

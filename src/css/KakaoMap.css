@@ -1,11 +1,9 @@
 .map-btn {
-    /*position: absolute;*/
-    /*bottom: 47%;*/
-    /*right: 37px;*/
+    position: absolute;
     z-index: 99;
     text-align: center;
 }
-.map-btn ul { display: flex; padding: 0; margin: 0; }
+/*.map-btn ul { display: flex; padding: 0; margin: 0; }*/
 
 .map-btn button {
     width: 80px;
@@ -13,10 +11,12 @@
     line-height: 80px;
     border: none;
     border-radius: 50px;
-    background: #16a085;
+    /*background: #16a085;*/
     margin: 10px;
+    font-size: 0.8em;
 }
 .map-btn a {
     color: #fff;
     text-decoration: none;
 }
+.senter-marker {}

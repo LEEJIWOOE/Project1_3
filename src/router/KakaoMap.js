@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import proj4 from 'proj4';
 import "bootstrap/js/dist/collapse";
 import "../css/KakaoMap.css";
+import AirStatus from "./Nefron";
+// import { AirStatus } from "../App"
 
 function MyMap() {
     /* global kakao */
@@ -264,8 +266,8 @@ function MyMap() {
         >
             <Map
                 center={{lat: 37.558185572111356, lng: 127.00091673775184}}
-                style={{ width: "100vw",
-                    height: "calc(50vh - 35px)",
+                style={{ width: "calc(100vw - 400px)",
+                    height: "100vh",
                     float: "left"}}
                 level={9}
                 onCreate={handleMapCreate} // 지도 객체가 생성되면 setMap을 통해 상태 업데이트
@@ -345,29 +347,6 @@ function MyMap() {
 }
 
 
-function AirStatus({ sidos, onSidoSelect }) {
-    console.log('Rendering AirStatus, sidos:', sidos);
-    if (!sidos) {
-        return <p>Loading...</p>;
-    }
-
-    return (
-        <div style={{background : "red"}}>
-            {sidos.map((sido, index) => {
-                console.log(`Rendering button for ${sido} at index ${index}`);
-                return (
-                    <button key={sido} onClick={() => onSidoSelect(sido)}>
-                        {sido}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
-
-
-
 function WeatherStatus() {
 
     return (
@@ -381,5 +360,5 @@ function WeatherStatus() {
     );
 }
 
-export {AirStatus, WeatherStatus};
+export { WeatherStatus };
 export default MyMap;

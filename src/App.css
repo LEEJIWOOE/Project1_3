@@ -8,14 +8,15 @@
 body {
   font-family: "Noto Sans KR", sans-serif;
   font-style: normal;
-  /*overflow: hidden;*/
+  overflow: hidden;
 }
 
 /* centents style */
 .sidebar {
   float: left;
-  width: 25%;
+  width: 400px;
   height: 100vh;
+  background: #16a085;
 }
 .sidebar header {
   padding: 20px;
@@ -37,6 +38,10 @@ body {
 .sidebar svg {
   display: flex;
   font-size: 1.8em;
+}
+.main-contents {
+  width: 100%;
+  height: 100%;
 }
 
 /* map section */
