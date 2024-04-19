@@ -178,6 +178,9 @@ body {
 
 .small_nav{
   margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 .small_nav .nav_button{
   background: white;
@@ -185,6 +188,7 @@ body {
   padding: 10px;
   border-radius: 10px;
   color : #16a085;
+
 }
 
 .small_nav .nav_button:hover{
@@ -239,19 +243,33 @@ table { width: 100%; }
   font-size: 55px;
 }
 
-.senter-marker button{
-  width: 100px;
-  height: 100px;
-  line-height: 80px;
-  border: none;
-  border-radius: 50px;
-  background: lightgray;
-  margin: 10px;
-  font-size: 0.8em;
+.senter-marker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
+
+.senter-marker button {
+  width: 100px;
+  height: 100px;
+  border: none;
+  border-radius: 50px;
+  background: #3FBFAD;
+  margin: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+
 .senter-marker button:hover{
-  background-color: #e0e0e0; /* 호버 상태의 배경색 변경 */
+  background-color: #A2E1D4; /* 호버 상태의 배경색 변경 */
 }
 
 

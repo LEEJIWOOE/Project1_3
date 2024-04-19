@@ -297,7 +297,7 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
             className="map-con"
         >
             <Map
-                center={{lat: 37.558185572111356, lng: 127.00091673775184}}
+                center={center}
                 className="Map"
                 level={9}
                 onCreate={handleMapCreate} // 지도 객체가 생성되면 setMap을 통해 상태 업데이트
