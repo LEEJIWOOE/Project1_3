@@ -2,24 +2,74 @@ import './App.css';
 import Forgine from "./router/forgine";
 import MyMap from "./router/KakaoMap";
 import Weather from "./router/weather";
-import AirStatus from "./router/Nefron";
 import React, { useState, useEffect } from "react";
 import {Route, Router, Routes, Link, useNavigate, Outlet} from 'react-router-dom'
 import {FiAlignJustify} from 'react-icons/fi';
+import {IoLogoWechat} from "react-icons/io5";
+import Chatbot from "./router/chatbot";
 import {TiWeatherWindyCloudy} from "react-icons/ti";
 
 function App() {
+
     let navigate = useNavigate();
+    const [currentView, setCurrentView] = useState(null);
+    const toggleView = (view) => {
+        setCurrentView(currentView === view ? null : view);
+    };
 
     // 현재 날짜 받아오기
     const toDay = new Date();
     const formatDate = `${toDay.getFullYear()}-${toDay.getMonth() + 1}-${toDay.getDate()}`;
 
-    // 날씨 상태 변수 정의
+    let [chatbot, setChatbot] = useState(false)
+    const [showSidos, setShowSidos] = useState(false);  // 새로운 상태 추가
 
+
+    const [selectedSido, setSelectedSido] = useState(null);
+    const [sidos, setSidos] = useState([
+        '강원특별자치도', '경기도', '경상남도', '경상북도', '광주광역시', '대구광역시',
+        '대전광역시', '부산광역시', '서울특별시', '인천광역시', '울산광역시',
+        '전라남도', '전라북도', '제주특별자치도', '충청남도'
+    ]);
+
+
+    const handleSidoSelection = (sido) => {
+        // 현재 선택된 지역이 다시 클릭되면 선택 해제
+        if (selectedSido === sido) {
+            setSelectedSido(null);
+        } else {
+            setSelectedSido(sido);
+        }
+    };
+
+
+
+    const [selectZeroWaste, setSelectZeroWaste] = useState(null);
+    const [zeroWastes, setzeroWastes] = useState(['제로마켓', '서울', '경기', '인천', '강원도', '충청도','경상도', '전라도', '제주도']);
+    const [showWastes, setShowWastes] = useState(false);  // 새로운 상태 추가
+
+    const handleZeroWasteSelection = (zeroWaste) => {
+        // 현재 선택된 카테고리가 다시 클릭되면 선택 해제
+        if (selectZeroWaste === zeroWaste) {
+            setSelectZeroWaste(null);
+        } else {
+            setSelectZeroWaste(zeroWaste);
+        }
+    };
 
     return (
         <div className="App">
+            <header className="top-nav">
+                <h1><TiWeatherWindyCloudy/><a href="/"> 에리허브</a></h1>
+                <nav className="nav-links">
+                <a href="/forgine">대기질현황</a>
+                    <a href="#pricing">대기오염예보</a>
+                </nav>
+                <div className="nav-info">
+                    <span>{formatDate}</span>
+                    <a href="https://www.weather.go.kr/w/index.do" target="_blank">현재기온</a>
+                </div>
+            </header>
 
             <section className="sidebar">
                 <header>
@@ -34,28 +84,67 @@ function App() {
                         <div className="myLocation">
                             <Weather/>
                         </div>
-                        <nav className="contents-btn">
-                            <AirStatus/>
-                        </nav>
                     </div>
                 </header>
-                <div className="main-contents"></div>
+                <div className="main-contents">
+                    <div className="small_nav">
+                        <button className="nav_button" onClick={() => toggleView('sidos')}>페트병수거함</button>
+                        <button className="nav_button" onClick={() => toggleView('zeroWastes')}>제로웨이스트</button>
+                        <button className="nav_button">길찾기</button>
+                    </div>
+                    {currentView === 'sidos' && (
+                        <div className="senter-marker">
+                            {sidos.map((sido, index) => (
+                                <button key={sido} onClick={() => handleSidoSelection(sido)}>
+                                    {sido}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                    {currentView === 'zeroWastes' && (
+                        <div className="senter-marker">
+                            {zeroWastes.map((zeroWaste, index) => (
+                                <button key={zeroWaste} onClick={() => handleZeroWasteSelection(zeroWaste)}>
+                                    {zeroWaste}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <div className="Chatbot">
+                    <button
+                        className="chat-open-btn"
+                        // onClick={openChat}
+                        onClick={() => {
+                            setChatbot(!chatbot)
+                        }}><IoLogoWechat/>
+                    </button>
+                    {''}
+                    {chatbot && <Chatbot closeChat={() => setChatbot(false)} />}
+                </div>
 
             </section>
 
+
             <section className="main-con">
                 <Routes>
-                    <Route path="/" element={<div className="big_content">
-                        <div className="foreign_box" onClick={() => {
-                            navigate('/forgine')
-                        }}><h1>놀이공원</h1></div>
-                        <div className="login_box" onClick={() => {
-                            navigate('/login')
-                        }}><h1>공항</h1></div>
-                    </div>}></Route>
-                    <Route path="/forgine" element={<Forgine/>}/>
-                    <Route path="/MyMap" element={<MyMap/>}/>
+                    <Route path="/" element={<div className="Info">
 
+                        <h1>Echo Recycling Hub</h1>
+                        <h2> 환영합니다! </h2>
+                        <p>우리의 목표는 지구와 함께 지속 가능한 생활을 영위하고자 하는 모두에게 유용한 정보와 도구를 제공하는 것입니다.</p>
+                        <p>이 웹 페이지는 지도 기능을 활용하여 주변 재활용 센터, 페트병 수거 자판기, 제로 웨이스트 샵과 같은 환경 관련 시설을 쉽게 찾을 수 있도록 도와줍니다.</p>
+                        <p> 더불어, 폐기물 배출량과 미세먼지 농도와 같은 환경 지표를 시각적으로 제공하여 사용자들이 지역의 환경 상태를 쉽게 파악할 수 있습니다.</p>
+
+                        <p> 또한, 사용자의 위치를 기준으로 가장 가까운 제로 웨이스트 샵까지의 길찾기 기능을 제공하여 지속 가능한 소비를 장려합니다.</p>
+                        <p> 이를 통해 우리는 각자의 일상 속에서 환경을 생각하고 실천할 수 있는 기회를 제공하고자 합니다.</p>
+
+                        <p> 우리는 지구를 위한 작은 변화가 모여 큰 변화를 이끌어낼 수 있다고 믿습니다. 함께하는 모든 분들의 작은 노력이 우리의 환경을 더욱</p>
+                        <p> 건강하고 지속 가능하게 만들어갈 것입니다.</p>
+                        <p> 지금 바로 이 웹 페이지를 통해 우리의 환경을 위한 첫걸음을 내딛어보세요. 함께라면 가능합니다!</p>
+                    </div>}/>
+                    <Route path="/forgine" element={<Forgine selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste} zeroWastes={zeroWastes}/>}/>
+                    <Route path="/MyMap" element={<MyMap selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste} zeroWastes={zeroWastes}/>}/>
                 </Routes>
             </section>
 
@@ -63,6 +152,19 @@ function App() {
     );
 }
 
+
+function WeatherStatus() {
+
+    return (
+        <div className="model">
+            <img
+                style={{width: "43%", height: "auto", float: "right"}}
+                alt="초미세먼지 모델 한반도"
+                src="https://www.airkorea.or.kr/file/proxyImage?fileName=2024/04/16/AQFv1_09h.20240414.KNU_09_01.PM2P5.2days.ani.gif"
+            />
+        </div>
+    );
+}
 
 
 export default App;

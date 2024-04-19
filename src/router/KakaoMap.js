@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import proj4 from 'proj4';
 import "bootstrap/js/dist/collapse";
 import "../css/KakaoMap.css";
-import AirStatus from "./Nefron";
-// import { AirStatus } from "../App"
+import collapse from "bootstrap/js/src/collapse";
 
-function MyMap() {
+
+function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
     /* global kakao */
     const [traffic, setTraffic] = useState(false);
     const [mapTypeId, setMapTypeId] = useState();
@@ -99,16 +99,10 @@ function MyMap() {
         setMapTypeId(mapTypeId === "ROADVIEW" ? null : "ROADVIEW");
     };
 
-// 지형정보 토글 함수
-    const toggleTerrain = () => {
-        setMapTypeId(mapTypeId === "TERRAIN" ? null : "TERRAIN");
-    };
-
 // 지적편집도 토글 함수
     const toggleUseDistrict = () => {
         setMapTypeId(mapTypeId === "USE_DISTRICT" ? null : "USE_DISTRICT");
     };
-
 
 
     // 재활용 버튼 클릭 핸들러
@@ -133,7 +127,6 @@ function MyMap() {
                 }
                 const jsonData = await response.text(); // 서버에서 받은 JSON 문자열
                 const firstParse = JSON.parse(jsonData); // 첫 번째 파싱으로 외부 문자열 제거
-                console.log(jsonData)
                 const dataObj = JSON.parse(firstParse); // 두 번째 파싱으로 실제 JSON 객체 추출
 
                 console.log(dataObj); // 실제 데이터 구조 확인
@@ -171,16 +164,12 @@ function MyMap() {
     const [selectedArea, setSelectedArea] = useState(null);
     const [hoverArea, setHoverArea] = useState(null);
 
-
-
     const handleMouseOver = (area) => {
         setHoverArea(area);
     };
-
     const handleMouseOut = () => {
         setHoverArea(null);
     };
-
     const handleClick = (area) => {
         if(selectedArea && selectedArea.properties.시군구명 === area.properties.시군구명){
             setSelectedArea(null);
@@ -189,9 +178,6 @@ function MyMap() {
         }
 
     };
-
-
-    // fetchData 함수를 useEffect 밖으로 이동
 
     const fetchData = async () => {
         try {
@@ -228,13 +214,8 @@ function MyMap() {
         fetchData();
     }, []);
 
-    const [sidos, setSidos] = useState(['강원특별자치도', '경기도', '경상남도', '경상북도', '광주광역시', '대구광역시', '대전광역시', '부산광역시', '서울특별시', '인천광역시', '울산광역시', '전라남도', '전라북도', '제주특별자치도', '충청남도']);
-
-
     const [allData, setAllData] = useState([]); // 전체 데이터
     const [displayData, setDisplayData] = useState([]); // 화면에 표시할 데이터
-    const [selectedSido, setSelectedSido] = useState(null); // 선택된
-    // MyMap 컴포넌트 내부
 
     useEffect(() => {
         const fetchData = async () => {
@@ -252,13 +233,64 @@ function MyMap() {
         fetchData();
     }, []);
 
+
 // 시도 선택 핸들러
-    const handleSidoSelection = (sido) => {
-        const filteredData = allData.filter(item => item.시도 === sido);
-        setDisplayData(filteredData);
-        setSelectedSido(sido);
+    useEffect(() => {
+        // 시도 선택에 따른 마커 표시
+        if (selectedSido && allData.length > 0) {
+            const filteredData = allData.filter(item => item.시도 === selectedSido);
+            setDisplayData(filteredData);
+        } else {
+            setDisplayData([]);  // 선택이 해제되면 마커 데이터를 비웁니다.
+        }
+    }, [selectedSido, allData]);
+
+
+    // 제로웨이스트샵
+    const [wasteAll, setwasteAll] = useState([]);
+    const [wasteMarker, setWasteMarker] = useState([]);
+
+    useEffect (() => {
+        const fetchData = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/places')
+            if (!response.ok) {
+                throw new Error('에러남..;;')
+            }
+            const jsonData = await response.json();
+            setwasteAll(jsonData);
+        } catch (error) {
+            console.log('제로웨이스트에러');
+        }
+    };
+        fetchData();
+    }, []);
+
+    const categoryRules = {
+        제로마켓: name => /(남원점|신구로점)/.test(name),
+        서울: name => name.startsWith('서울'),
+        경기: name => /(고양|광명|김포|남양주|부천|분당|성남|수원|시흥|오산|용인|파주|평택|하남|화성)/.test(name),
+        인천: name => name.startsWith('인천'),
+        강원도: name => /(강릉|원주|춘천)/.test(name),
+        충청도: name => /(논산|대전|천안|태안|청주)/.test(name),
+        경상도: name => /(경주|구미|김천|김해|대구|부산|안동|양산|울산|진주|창원|통영)/.test(name),
+        전라도: name => /(광주|군산|나주|담양|순천|목포|전주)/.test(name),
+        제주도: name => name.startsWith('제주'),
+        // 나머지 카테고리에 대해서도 비슷한 규칙을 추가합니다.
     };
 
+    useEffect(() => {
+        // 제로 웨이스트 카테고리 선택에 따른 마커 표시
+        if (selectZeroWaste && wasteAll.length > 0) {
+            const matchingRule = categoryRules[selectZeroWaste];
+            if (matchingRule) {
+                const filterWaste = wasteAll.filter(item => matchingRule(item.name));
+                setWasteMarker(filterWaste);
+            }
+        } else {
+            setWasteMarker([]);  // 선택이 해제되면 마커 데이터를 비웁니다.
+        }
+    }, [selectZeroWaste, wasteAll]);
 
     return (
         <div
@@ -266,14 +298,14 @@ function MyMap() {
         >
             <Map
                 center={{lat: 37.558185572111356, lng: 127.00091673775184}}
-                style={{ width: "calc(100vw - 400px)",
-                    height: "100vh",
-                    float: "left"}}
+                className="Map"
                 level={9}
                 onCreate={handleMapCreate} // 지도 객체가 생성되면 setMap을 통해 상태 업데이트
             >
                 <MapTypeControl position={"TOPRIGHT"}/>
                 <ZoomControl position={"RIGHT"}/>
+
+                {/*서울지도표시*/}
                 {cityData.map((area, index) => (
                     <Polygon
                         key={index}
@@ -310,6 +342,7 @@ function MyMap() {
                     </MapInfoWindow>
                 )}
 
+                {/*내위치마커*/}
                 {!isLoading && (
                     <MapMarker position={center}
                                draggable={true}
@@ -322,13 +355,27 @@ function MyMap() {
                                }}>
                     </MapMarker>
                 )}
+
+                {/*재활용센터 마커*/}
                 {showMarkers && markers}
+
+                {/*로드뷰, 지형뷰등*/}
                 {mapTypeId && <MapTypeId type={mapTypeId}/>}
+
+                {/*네프론 마커*/}
                 {displayData.map((item, index) => (
                     <MapMarker
                         key={index}
                         position={{ lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) }}
                         title={item.name}
+                    />
+                ))}
+                {/*제로웨이스트 마커*/}
+                {wasteMarker.map((item, index) => (
+                    <MapMarker
+                    key={index}
+                    position={{ lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) }}
+                    title={item.name}
                     />
                 ))}
             </Map>
@@ -339,7 +386,6 @@ function MyMap() {
                     <button onClick={toggleUseDistrict}>지적편집도</button>
                     <button onClick={toggleMarkers}>재활용센터</button>
                     <button onClick={moveToCurrentLocation}>내 위치</button>
-                    <AirStatus sidos={sidos} onSidoSelect={handleSidoSelection} />
                 </ul>
             </div>
         </div>
@@ -347,18 +393,4 @@ function MyMap() {
 }
 
 
-function WeatherStatus() {
-
-    return (
-        <div className="model">
-            <img
-                style={{width: "43%", height: "auto", float: "right"}}
-                alt="초미세먼지 모델 한반도"
-                src="https://www.airkorea.or.kr/file/proxyImage?fileName=2024/04/16/AQFv1_09h.20240414.KNU_09_01.PM2P5.2days.ani.gif"
-            />
-        </div>
-    );
-}
-
-export { WeatherStatus };
 export default MyMap;

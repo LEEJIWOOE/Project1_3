@@ -5,7 +5,7 @@ import {IoClose} from "react-icons/io5";
 import {RiRobot2Fill} from "react-icons/ri";
 import "../css/ChatBot.css";
 
-function Chatbot() {
+function Chatbot(props) {
     const [chatHistory, setChatHistory] = useState([]);
     const [responses, setResponses] = useState([]);
 
@@ -61,7 +61,7 @@ function Chatbot() {
     async function sendMessage() {
         const userInput = document.getElementById('textInput').value.toLowerCase().trim();
         if (userInput !== '') {
-            appendMessage('User', userInput);
+            appendMessage('User\n', userInput);
 
             let responseMessage = '해당 정보를 찾을 수 없습니다.';
 
@@ -117,7 +117,7 @@ function Chatbot() {
 
 
     return (
-        <div className="Chatbot">
+        <div className="ChatbotIn">
             <div className="chatbot-header">
                 <span className="chat-icon">
                     <RiRobot2Fill/>
@@ -127,13 +127,13 @@ function Chatbot() {
                     <p>Visiters Supporter</p>
                 </div>
                 <button className="chat-close-btn">
-                    <IoClose/>
+                    <IoClose onClick={props.closeChat}/>
                 </button>
             </div>
-            <div className="welcome-message">
-                {welcomeMessage()}
-            </div>
-            <div ref={chatContainerRef}>
+            <div className="message-display-container" ref={chatContainerRef}>
+                    <div className="welcome-message">
+                        {welcomeMessage()}
+                    </div>
                 {chatHistory.map((message, index) => (
                     <div key={index} className={`chat-message-${message.sender === 'User' ? 'user' : 'bot'}`}>
                         <strong>{message.sender}:</strong> <div>{message.message}</div>
@@ -142,8 +142,7 @@ function Chatbot() {
             </div>
             <div className="sendMessage">
                 <input id="textInput" type="text" placeholder="메세지를 입력하세요." onKeyDown={handleKeyDown}/>
-                <button onClick={sendMessage}><GoPaperAirplane/>
-                </button>
+                <button onClick={sendMessage}><GoPaperAirplane/></button>
             </div>
         </div>
     );
