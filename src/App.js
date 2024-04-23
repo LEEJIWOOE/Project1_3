@@ -3,19 +3,51 @@ import Forgine from "./router/forgine";
 import MyMap from "./router/KakaoMap";
 import Weather from "./router/weather";
 import React, { useState, useEffect } from "react";
-import {Route, Router, Routes, Link, useNavigate, Outlet} from 'react-router-dom'
+import {Route, Router, Routes, Link, useNavigate, NavLink, Outlet} from 'react-router-dom'
 import {FiAlignJustify} from 'react-icons/fi';
 import {IoLogoWechat} from "react-icons/io5";
 import Chatbot from "./router/chatbot";
 import {TiWeatherWindyCloudy} from "react-icons/ti";
+import LoginPage from "./router/login";
+import LogoutPage from "./router/logout";
 
 function App() {
 
-    let navigate = useNavigate();
+
     const [currentView, setCurrentView] = useState(null);
     const toggleView = (view) => {
         setCurrentView(currentView === view ? null : view);
     };
+
+    let navigate = useNavigate();
+    // 로그인 상태를 localStorage에서 로드
+    const loadAuthData = () => {
+        const storedIsLogin = localStorage.getItem('isLogin');
+        const storedLogin = localStorage.getItem('login');
+        if (storedIsLogin && storedLogin) {
+            return { isLogin: storedIsLogin === 'true', login: JSON.parse(storedLogin) };
+        }
+        return { isLogin: false, login: { userid: '', nickname: '' } };
+    };
+
+    const [isLogin, setIsLogin] = useState(loadAuthData().isLogin);
+    const [login, setLogin] = useState(loadAuthData().login);
+
+    // 로그인 상태 변경시 localStorage에 저장
+    useEffect(() => {
+        localStorage.setItem('isLogin', isLogin);
+        localStorage.setItem('login', JSON.stringify(login));
+    }, [isLogin, login]);
+
+    // 로그아웃 로직 구현
+    const logout = () => {
+        setIsLogin(false);
+        setLogin({ userid: '', nickname: '' });
+        localStorage.removeItem('isLogin');
+        localStorage.removeItem('login');
+        navigate("/logout");
+    };
+
 
     // 현재 날짜 받아오기
     const toDay = new Date();
@@ -57,13 +89,40 @@ function App() {
         }
     };
 
+
+    const [selectMark, setSelectZeroMark] = useState(null);
+    const [zeroMarks, setzeroMarks] = useState(['서울', '경기', '인천', '강원도', '충청도','경상도', '전라도', '제주']);
+
+    const handleMarkSecletion = (zeroMark) =>{
+        if(selectMark === zeroMark) {
+            setSelectZeroMark(null);
+        }else {
+            setSelectZeroMark(zeroMark);
+        }
+    }
+
+
     return (
         <div className="App">
+            <header className="header-Top">
+                <NavLink to ="/" className="gradient-text"><h1>Eco-Recycling Hub</h1></NavLink>
+                {isLogin ? (
+                    <div className="login-btn">
+                        <button className="dropdown-btn">{login.nickname} ▼</button>
+                        <div className="dropdown-content">
+                            <NavLink className="myPage" to="/mypage" >마이페이지</NavLink>
+                            <button className="nav-link" onClick={logout}>로그아웃</button>
+                        </div>
+                    </div>
+                ) : (
+                    <NavLink to="/login" className="login-btn">로그인</NavLink>
+                )}
+            </header>
             <header className="top-nav">
-                <h1><TiWeatherWindyCloudy/><a href="/"> 에리허브</a></h1>
+                <h1><TiWeatherWindyCloudy/><NavLink to="/"> 에리허브</NavLink></h1>
                 <nav className="nav-links">
-                <a href="/forgine">대기질현황</a>
-                    <a href="#pricing">대기오염예보</a>
+                    <NavLink to ='/forgine'>대기질현황</NavLink>
+                    <NavLink to="/forgine">대기오염예보</NavLink>
                 </nav>
                 <div className="nav-info">
                     <span>{formatDate}</span>
@@ -77,8 +136,7 @@ function App() {
                         <button className="hamburger-btn">
                             <FiAlignJustify/>
                         </button>
-                        <h1><a href={"/forgine"}>ECO Recycle Hub</a></h1>
-                        <button className="login-btn">로그인</button>
+                        <h2><NavLink to ="/forgine">ECO Recycle Hub</NavLink></h2>
                     </nav>
                     <div className="head-weather">
                         <div className="myLocation">
@@ -90,7 +148,7 @@ function App() {
                     <div className="small_nav">
                         <button className="nav_button" onClick={() => toggleView('sidos')}>페트병수거함</button>
                         <button className="nav_button" onClick={() => toggleView('zeroWastes')}>제로웨이스트</button>
-                        <button className="nav_button">길찾기</button>
+                        <button className="nav_button" onClick={() => toggleView('zeroMarks')}>재활용센터</button>
                     </div>
                     {currentView === 'sidos' && (
                         <div className="senter-marker">
@@ -110,6 +168,15 @@ function App() {
                             ))}
                         </div>
                     )}
+                    {currentView === 'zeroMarks' && (
+                        <div className="senter-marker">
+                            {zeroMarks.map((zeroMark, index) => (
+                                <button key={zeroMark} onClick={() => handleMarkSecletion(zeroMark)}>
+                                    {zeroMark}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <div className="Chatbot">
                     <button
@@ -120,7 +187,7 @@ function App() {
                         }}><IoLogoWechat/>
                     </button>
                     {''}
-                    {chatbot && <Chatbot closeChat={() => setChatbot(false)} />}
+                    {chatbot && <Chatbot closeChat={() => setChatbot(false)}/>}
                 </div>
 
             </section>
@@ -143,8 +210,15 @@ function App() {
                         <p> 건강하고 지속 가능하게 만들어갈 것입니다.</p>
                         <p> 지금 바로 이 웹 페이지를 통해 우리의 환경을 위한 첫걸음을 내딛어보세요. 함께라면 가능합니다!</p>
                     </div>}/>
-                    <Route path="/forgine" element={<Forgine selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste} zeroWastes={zeroWastes}/>}/>
-                    <Route path="/MyMap" element={<MyMap selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste} zeroWastes={zeroWastes}/>}/>
+                    <Route path="/forgine"
+                           element={<Forgine selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste}
+                                             zeroWastes={zeroWastes} selectMark={selectMark}/>}/>
+                    <Route path="/MyMap"
+                           element={<MyMap selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste}
+                                           zeroWastes={zeroWastes} selectMark={selectMark}/>}/>
+                    <Route path="/login"
+                           element={<LoginPage setLoginStatus={setIsLogin} setLoginUser={setLogin} />}/>
+                    <Route path="/logout" element={<LogoutPage/>}/>
                 </Routes>
             </section>
 
